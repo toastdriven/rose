@@ -16,6 +16,8 @@ By putting your version number in a top-level VERSION file & using this library,
 you can cut duplication & tedious manual work **without** having to lean on
 crazy import hacks.
 
+Inspired by crazy discussion with George Hickman (ghickman) at PyCon 2013.
+
 
 Requirements
 ============

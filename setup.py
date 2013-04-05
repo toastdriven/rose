@@ -11,7 +11,7 @@ import os
 long_desc = ''
 
 try:
-    long_desc = os.path.join(os.path.dirname(__file__), 'README.rst').read()
+    long_desc = open(os.path.join(os.path.dirname(__file__), 'README.rst')).read()
 except:
     # The description isn't worth a failed install...
     pass

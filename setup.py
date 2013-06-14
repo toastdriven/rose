@@ -18,9 +18,8 @@ except:
 
 setup(
     name='rose',
-    # Ironically, I can't use rose here.
-    version='1.0.0',
-    description='A small library for keeping your version up-to-date easily & everywhere.',
+    version='2.0.0',
+    description='An end-user tool for creating & releasing Python packages.',
     long_description=long_desc,
     author='Daniel Lindsley',
     author_email='daniel@toastdriven.com',
@@ -36,4 +35,8 @@ setup(
         'Programming Language :: Python',
         'Programming Language :: Python :: 3',
     ],
+    install_requires=[
+        'shell',
+        'pystache',
+    ]
 )

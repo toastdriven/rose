@@ -1,5 +1,6 @@
 from __future__ import unicode_literals
 import importlib
+
 from rose.base import Rose
 from rose.exceptions import MissingCommandError, CommandNotFoundError
 
@@ -79,6 +80,10 @@ class RoseRunner(object):
 
     def run(self, cli_args):
         command_name, args, kwargs = self.parse_args(cli_args)
+
+        if command_name == 'help':
+            return self.help(*args, **kwargs)
+
         command_class = self.load_command(command_name)
         finished_cmd = self.run_command(command_class, *args, **kwargs)
 
@@ -86,3 +91,13 @@ class RoseRunner(object):
             finished_cmd.send_output()
 
         return finished_cmd.exit_code
+
+    def help(self, *args, **kwargs):
+        if not len(args):
+            self.err("Usage: rose <command_name> [args] [flags]")
+        else:
+            help_command_name = args[0]
+            command_class = self.load_command(help_command_name)
+            self.err(command_class(self.rose).help())
+
+        return 1

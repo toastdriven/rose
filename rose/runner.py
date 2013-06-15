@@ -69,7 +69,7 @@ class RoseRunner(object):
 
         raise CommandNotFoundError("Command '%s' can not be found." % command_name)
 
-    def help(self, *args, **kwargs):
+    def help(self, *args, extra_message=None, **kwargs):
         help_command = BaseCommand(self.rose)
         help_command.exit_code = 1
 
@@ -79,6 +79,10 @@ class RoseRunner(object):
             help_command_name = args[0]
             command_class = self.load_command(help_command_name)
             help_command.err(command_class(self.rose).help())
+
+            if extra_message:
+                help_command.err('')
+                help_command.err(extra_message)
 
         return help_command
 
@@ -94,7 +98,12 @@ class RoseRunner(object):
             return self.help(*args, **kwargs)
 
         command_class = self.load_command(command_name)
-        return self.run_command(command_class, *args, **kwargs)
+
+        try:
+            return self.run_command(command_class, *args, **kwargs)
+        except ShowHelpError as err:
+            kwargs['extra_message'] = "%s" % err
+            return self.help(*args, **kwargs)
 
     def from_cli(self, cli_args):
         finished_cmd = self.run(cli_args)

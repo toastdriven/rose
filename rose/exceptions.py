@@ -12,3 +12,15 @@ class MissingCommandError(RoseError):
 
 class CommandNotFoundError(RoseError):
     pass
+
+
+class CommandFailedError(RoseError):
+    pass
+
+
+class ShowHelpError(RoseError):
+    pass
+
+
+class FlagError(RoseError):
+    pass

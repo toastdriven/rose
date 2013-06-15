@@ -1,3 +1,4 @@
+from __future__ import unicode_literals
 from rose.base import BaseCommand
 
 

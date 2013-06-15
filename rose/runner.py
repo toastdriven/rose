@@ -1,3 +1,4 @@
+from __future__ import unicode_literals
 import importlib
 from rose.base import Rose
 from rose.exceptions import MissingCommandError, CommandNotFoundError

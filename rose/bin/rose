@@ -1,8 +1,10 @@
+#!/usr/bin/env python
 import sys
 from rose.runner import RoseRunner
 
 
 if __name__ == '__main__':
+    args = sys.argv[1:]
     runner = RoseRunner()
-    retval = runner.run()
+    retval = runner.from_cli(args)
     sys.exit(retval)

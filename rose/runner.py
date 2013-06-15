@@ -1,7 +1,7 @@
 from __future__ import unicode_literals
 import importlib
 
-from rose.base import Rose
+from rose.base import Rose, BaseCommand
 from rose.exceptions import MissingCommandError, CommandNotFoundError
 
 
@@ -23,10 +23,6 @@ class RoseRunner(object):
 
         args = []
         kwargs = {}
-
-        if command_name in ['-h', '--help', 'help']:
-            return self.help()
-
         i = 0
 
         while i < len(cli_args):
@@ -73,6 +69,19 @@ class RoseRunner(object):
 
         raise CommandNotFoundError("Command '%s' can not be found." % command_name)
 
+    def help(self, *args, **kwargs):
+        help_command = BaseCommand(self.rose)
+        help_command.exit_code = 1
+
+        if not len(args):
+            help_command.err("Usage: rose <command_name> [args] [flags]")
+        else:
+            help_command_name = args[0]
+            command_class = self.load_command(help_command_name)
+            help_command.err(command_class(self.rose).help())
+
+        return help_command
+
     def run_command(self, command_class, *args, **kwargs):
         cmd = command_class(self.rose)
         cmd.run(*args, **kwargs)
@@ -85,19 +94,12 @@ class RoseRunner(object):
             return self.help(*args, **kwargs)
 
         command_class = self.load_command(command_name)
-        finished_cmd = self.run_command(command_class, *args, **kwargs)
+        return self.run_command(command_class, *args, **kwargs)
+
+    def from_cli(self, cli_args):
+        finished_cmd = self.run(cli_args)
 
         if finished_cmd.has_output():
             finished_cmd.send_output()
 
         return finished_cmd.exit_code
-
-    def help(self, *args, **kwargs):
-        if not len(args):
-            self.err("Usage: rose <command_name> [args] [flags]")
-        else:
-            help_command_name = args[0]
-            command_class = self.load_command(help_command_name)
-            self.err(command_class(self.rose).help())
-
-        return 1

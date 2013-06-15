@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from rose.commands import bump_version
+from rose.commands import bump
 from rose.exceptions import MissingCommandError, CommandNotFoundError
 
 from .mock_commands import TestCommand
@@ -18,15 +18,24 @@ class RoseRunnerTestCase(BaseRoseTestCase):
     def test_runner_load_command(self):
         runner = self.create_runner()
         self.assertRaises(CommandNotFoundError, runner.load_command, 'not_there')
-        self.assertEqual(runner.load_command('bump_version'), bump_version.command_class)
+        self.assertEqual(runner.load_command('bump'), bump.command_class)
 
     def test_runner_run_command_help(self):
         runner = self.create_runner()
-        help_cmd = runner.load_command('help')
-        finished_cmd = runner.run_command(help_cmd)
+        self.assertRaises(CommandNotFoundError, runner.load_command, 'help')
+        finished_cmd = runner.help()
         self.assertEqual(finished_cmd.exit_code, 1)
         self.assertEqual(finished_cmd.output, [
             (2, 'Usage: rose <command_name> [args] [flags]'),
+        ])
+
+    def test_runner_run_command_bump_help(self):
+        # Test a specific command's help.
+        runner = self.create_runner()
+        finished_cmd = runner.run(['help', 'bump'])
+        self.assertEqual(finished_cmd.exit_code, 1)
+        self.assertEqual(finished_cmd.output, [
+            (2, 'Usage: rose bump <major>.<minor>.<patch>[-prerelease]\n\nIncrements the version in the `setup.py`, the Sphinx `conf.py` & package itself.\nIt will skip any of those files if they can not be found.'),
         ])
 
     def test_runner_run_command_test(self):

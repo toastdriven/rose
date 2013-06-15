@@ -15,20 +15,12 @@ import sys
 from rose.exceptions import VersionError
 
 
-__author__ = 'Daniel Lindsley'
-__license__ = 'New BSD'
-__version__ = (2, 0, 0)
-
-
-
 class Rose(object):
     def __init__(self, base_dir=None):
         self._base_dir = base_dir
         self.config = {
-            'search_for': [
-                '^__version__ = ',
-                'version\s?=\s?',
-            ],
+            'sphinx_path': os.path.join('docs', 'conf.py'),
+            'module_path': os.path.join('*', '__init__.py'),
         }
         self._config_loaded = False
 
@@ -120,6 +112,9 @@ class BaseCommand(object):
 
     def run(self, *args, **kwargs):
         raise NotImplementedError("Subclasses must implement the 'run' method.")
+
+    def help(self, *args, **kwargs):
+        return "No help provided for this command."
 
     def out(self, msg):
         self.output.append((

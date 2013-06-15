@@ -50,11 +50,9 @@ class RoseTestCase(BaseRoseTestCase):
 
     def test_get_set_config(self):
         rose = self.create_rose()
-        self.assertTrue('search_for' in rose.config)
-        self.assertEqual(rose.get_config('search_for'), [
-            '^__version__ = ',
-            'version\\s?=\\s?',
-        ])
+        self.assertTrue('sphinx_path' in rose.config)
+        self.assertTrue('module_path' in rose.config)
+        self.assertEqual(rose.get_config('sphinx_path'), 'docs/conf.py')
         self.assertEqual(rose.get_config('does_not_exist'), None)
 
         rose.set_config('does_not_exist', 'does now')

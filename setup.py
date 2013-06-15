@@ -38,5 +38,8 @@ setup(
     install_requires=[
         'shell',
         'pystache',
-    ]
+    ],
+    scripts=[
+        'rose/bin/rose',
+    ],
 )

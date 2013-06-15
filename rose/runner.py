@@ -5,8 +5,11 @@ from rose.exceptions import MissingCommandError, CommandNotFoundError
 
 
 class RoseRunner(object):
-    def __init__(self):
-        self.rose = Rose()
+    def __init__(self, rose=None):
+        self.rose = rose
+
+        if not self.rose:
+            self.rose = Rose()
 
     def parse_args(self, cli_args=None):
         if cli_args is None:

@@ -3,6 +3,7 @@ import shutil
 import unittest
 
 from rose.base import Rose
+from rose.runner import RoseRunner
 
 
 class BaseRoseTestCase(unittest.TestCase):
@@ -31,3 +32,6 @@ class BaseRoseTestCase(unittest.TestCase):
 
     def create_rose(self):
         return Rose(base_dir=self.data)
+
+    def create_runner(self):
+        return RoseRunner(rose=self.create_rose())

@@ -139,8 +139,10 @@ class BaseCommand(object):
     def send_output(self):
         for out_type, msg in self.output:
             if out_type == BaseCommand.STDOUT:
-                print(msg)
+                sys.stdout.write(msg + '\n')
+                sys.stdout.flush()
             elif out_type == BaseCommand.STDERR:
                 sys.stderr.write(msg + '\n')
+                sys.stderr.flush()
 
         self.output = []

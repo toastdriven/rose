@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 import json
 import os
+
 from rose.base import Rose
 from rose.exceptions import VersionError
 

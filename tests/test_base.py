@@ -1,47 +1,13 @@
+# -*- coding: utf-8 -*-
 import json
 import os
-import shutil
-import unittest
-from rose.base import Rose, BaseCommand
-from rose.commands import bump_version
-from rose.exceptions import VersionError, MissingCommandError, CommandNotFoundError
-from rose.runner import RoseRunner
+from rose.base import Rose
+from rose.exceptions import VersionError
+
+from .utils import BaseRoseTestCase
 
 
-class TestCommand(BaseCommand):
-    def run(self, *args, **kwargs):
-        self.out('Hello, ')
-        self.out('world!')
-        self.err('Oops!')
-        self.exit_code = 0
-
-
-class RoseTestCase(unittest.TestCase):
-    def setUp(self):
-        super(RoseTestCase, self).setUp()
-        self.base = os.path.join('/tmp', 'rose_tests/data')
-        self.config = os.path.join('/tmp', 'rose_tests/config')
-
-        # Nuke in-case the old dirs are still there.
-        shutil.rmtree(self.base, ignore_errors=True)
-        shutil.rmtree(self.config, ignore_errors=True)
-        os.makedirs(self.base)
-        os.makedirs(self.config)
-
-        # Stash/set ``os.environ['HOME']`` to simulate loading from the home
-        # directory.
-        self.old_home = os.environ.get('HOME', '')
-        os.environ['HOME'] = self.config
-
-    def tearDown(self):
-        # Restore.
-        os.environ['HOME'] = self.old_home
-        shutil.rmtree(os.path.join('/tmp', 'rose_tests'), ignore_errors=True)
-        super(RoseTestCase, self).tearDown()
-
-    def create_rose(self):
-        return Rose(base_dir=self.base)
-
+class RoseTestCase(BaseRoseTestCase):
     def test_parse_version_fails(self):
         rose = self.create_rose()
         self.assertRaises(VersionError, rose.parse_version, '0')
@@ -75,11 +41,11 @@ class RoseTestCase(unittest.TestCase):
         # The only thing to test is that the base dir gets set automatically.
         rose = Rose()
         self.assertTrue(len(rose.base_dir) > 0)
-        self.assertNotEqual(rose.base_dir, self.base)
+        self.assertNotEqual(rose.base_dir, self.data)
 
     def test_manual_initialization(self):
         rose = self.create_rose()
-        self.assertEqual(rose.base_dir, self.base)
+        self.assertEqual(rose.base_dir, self.data)
 
     def test_get_set_config(self):
         rose = self.create_rose()
@@ -116,36 +82,3 @@ class RoseTestCase(unittest.TestCase):
 
         rose = self.create_rose()
         self.assertTrue('test_config' in rose.load_config_file(config_path))
-
-    def test_runner_parse_args(self):
-        runner = RoseRunner()
-        self.assertRaises(MissingCommandError, runner.parse_args)
-        self.assertEqual(runner.parse_args(cli_args=['hello']), ('hello', [], {}))
-        self.assertEqual(runner.parse_args(cli_args=[
-            'hello', 'world', '-t', '-n', 'whee', '--verbosity'
-        ]), ('hello', ['world'], {'n': 'whee', 't': True, 'verbosity': True}))
-
-    def test_runner_load_command(self):
-        runner = RoseRunner()
-        self.assertRaises(CommandNotFoundError, runner.load_command, 'not_there')
-        self.assertEqual(runner.load_command('bump_version'), bump_version.command_class)
-
-    def test_runner_run_command_help(self):
-        runner = RoseRunner()
-        help_cmd = runner.load_command('help')
-        finished_cmd = runner.run_command(help_cmd)
-        self.assertEqual(finished_cmd.exit_code, 1)
-        self.assertEqual(finished_cmd.output, [
-            (2, 'Usage: rose <command_name> [args] [flags]'),
-        ])
-
-    def test_runner_run_command_test(self):
-        runner = RoseRunner()
-        test_cmd = TestCommand
-        finished_cmd = runner.run_command(test_cmd)
-        self.assertEqual(finished_cmd.exit_code, 0)
-        self.assertEqual(finished_cmd.output, [
-            (1, 'Hello, '),
-            (1, 'world!'),
-            (2, 'Oops!'),
-        ])

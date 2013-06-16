@@ -12,6 +12,8 @@ import os
 import re
 import sys
 
+from shell import Shell
+
 from rose.exceptions import VersionError
 
 
@@ -109,6 +111,7 @@ class BaseCommand(object):
         self.rose = rose
         self.output = []
         self.exit_code = 0
+        self.shell = Shell()
 
     def run(self, *args, **kwargs):
         raise NotImplementedError("Subclasses must implement the 'run' method.")
@@ -141,3 +144,17 @@ class BaseCommand(object):
                 sys.stderr.flush()
 
         self.output = []
+
+    def mangle_to_snake_case(self, value):
+        return value.replace('-', '_')
+
+    def check_success(self, sh):
+        if sh.code != 0:
+            for error in sh.errors():
+                self.err(error)
+
+            self.exit_code = 1
+            return False
+
+        self.exit_code = 0
+        return True

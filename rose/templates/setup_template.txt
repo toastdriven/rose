@@ -1,0 +1,76 @@
+#!/usr/bin/env python
+try:
+    from setuptools import setup
+except ImportError:
+    from ez_setup import use_setuptools
+    use_setuptools()
+    from setuptools import setup
+
+{{#readme}}
+import os
+long_desc = ''
+
+try:
+    long_desc = os.path.join(os.path.dirname(__file__), '{{ path }}').read()
+except:
+    # The description isn't worth a failed install...
+    pass
+{{/readme}}
+
+setup(
+    name='{{ package_name }}',
+    version='{{ full_version }}',
+    description='{{ short_description }}',
+    long_description=long_desc,
+    {{#author}}
+    author='{{ name }}',
+    author_email='{{ email }}',
+    {{/author}}
+    {{#has_url}}
+    url='{{ project_url }}',
+    {{/has_url}}
+
+    FIXME:
+    py_modules=[
+        'rose'
+    ],
+
+    {{#license}}
+    license='{{ name }}',
+    {{/license}}
+
+    FIXME:
+    package_data={
+        'rose': [
+            'templates/*',
+        ]
+    },
+
+    {{#has_dependencies}}
+    requires=[
+        {{#requires}}
+        '{{name}}',
+        {{/requires}}
+    ],
+    install_requires=[
+        {{#install_requires}}
+        '{{name}}',
+        {{/install_requires}}
+    ],
+    {{/has_dependencies}}
+    {{#has_scripts}}
+    scripts=[
+        {{#scripts}}
+        '{{path}}',
+        {{/scripts}}
+    ],
+    {{/has_scripts}}
+    {{#has_classifiers}}
+    classifiers=[
+        {{#classifiers}}
+        '{{name}}',
+        {{/classifiers}}
+    ],
+    {{#has_classifiers}}
+    zip_safe={{zip_safe}}
+)

@@ -24,3 +24,7 @@ class ShowHelpError(RoseError):
 
 class FlagError(RoseError):
     pass
+
+
+class TemplateNotFoundError(RoseError):
+    pass

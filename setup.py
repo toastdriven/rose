@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+`#!/usr/bin/env python
 try:
     from setuptools import setup
 except ImportError:
@@ -7,7 +7,6 @@ except ImportError:
     from setuptools import setup
 
 import os
-
 long_desc = ''
 
 try:
@@ -24,8 +23,28 @@ setup(
     author='Daniel Lindsley',
     author_email='daniel@toastdriven.com',
     url='http://github.com/toastdriven/rose',
-    py_modules=['rose'],
+    packages=[
+        'rose',
+        'rose.commands',
+    ],
     license='BSD',
+    package_data={
+        'rose': [
+            'bin/*',
+            'templates/*',
+        ]
+    },
+    requires=[
+        'shell',
+        'pystache',
+    ],
+    install_requires=[
+        'shell',
+        'pystache',
+    ],
+    scripts=[
+        'rose/bin/rose',
+    ],
     classifiers=[
         'Development Status :: 5 - Production/Stable',
         'Intended Audience :: Developers',
@@ -35,11 +54,5 @@ setup(
         'Programming Language :: Python',
         'Programming Language :: Python :: 3',
     ],
-    install_requires=[
-        'shell',
-        'pystache',
-    ],
-    scripts=[
-        'rose/bin/rose',
-    ],
+    zip_safe=False,
 )
